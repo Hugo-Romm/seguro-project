@@ -1,0 +1,51 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button default-href="#">
+      </ion-back-button>
+    </ion-buttons>
+
+    <ion-title>{{isNew ? 'Nuevo' : 'Editar'}} Cliente</ion-title>
+
+    <ion-buttons slot="primary">
+
+      <ion-button fill="solid" color="success" (click)="guardarCliente()">
+        Guardar
+        <ion-icon slot="end" name="save"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="!isNew" fill="solid" (click)="eliminarCliente()" color="danger">
+        Borrar
+        <ion-icon slot="end" name="trash"></ion-icon>
+      </ion-button>
+
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <ion-grid>
+    <ion-list>
+      <ion-input label="ID#" label-placement="floating" fill="outline" placeholder="Enter text" [(ngModel)]="id"
+        readonly="true" disabled="true">
+      </ion-input>
+      <br>
+      <ion-input label="Nombre y Apellido" label-placement="floating" fill="outline" placeholder="Enter text"
+        [(ngModel)]="cliente.nombre_apellido">
+      </ion-input>
+      <br>
+      <ion-input type="date" label="Fecha de Nacimiento" label-placement="floating" fill="outline"
+        placeholder="Enter text" [(ngModel)]="cliente.fecha_nacimiento">
+      </ion-input>
+      <br>
+      <ion-input label="Bien asegurado" label-placement="floating" fill="outline" placeholder="Enter text"
+        [(ngModel)]="cliente.bien_asegurado">
+      </ion-input>
+      <br>
+      <ion-input label="Monto asegurado" label-placement="floating" fill="outline" placeholder="Enter text"
+        [(ngModel)]="cliente.monto_asegurado">
+      </ion-input>
+    </ion-list>
+  </ion-grid>
+</ion-content>
