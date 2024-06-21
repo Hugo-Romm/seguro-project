@@ -48,4 +48,28 @@
       </ion-input>
     </ion-list>
   </ion-grid>
+
+  <ion-grid *ngIf="!isNew">
+    <ion-item>
+      <div class="image-container">
+        <img [src]="avatar" alt="">
+      </div>
+    </ion-item>
+    <ion-item>
+      <input id="fileUpload" type="file" #upload accept=".png,.jpg">
+    </ion-item>
+    <ion-item>
+      <ion-button (click)="uploadFile(upload)" color="success">Subir Imagen
+        <ion-icon slot="end" name="cloud-upload"></ion-icon>
+      </ion-button>
+    </ion-item>
+    
+
+    <ion-item *ngIf="avatar">
+      <ion-button (click)="eliminarAvatar()" color="danger">Eliminar Avatar
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-grid>
+
 </ion-content>

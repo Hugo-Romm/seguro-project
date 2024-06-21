@@ -12,6 +12,7 @@ export class ClienteEditPage implements OnInit {
   id: any;  //atributo que recibe el id del reg. desde la ruta
   cliente: any = {};
   isNew: boolean = false;
+  avatar: string = '';
 
   constructor(
     private readonly firestore: Firestore,
@@ -75,7 +76,9 @@ export class ClienteEditPage implements OnInit {
       if (doc.data()) {
         this.cliente = doc.data();
         this.cliente.fecha_nacimiento = this.cliente.fecha_nacimiento.toDate().toISOString().substring(0, 10) + "";
-
+        if(this.cliente.avatar){
+          this.obtenerAvatarCliente();
+        }
       } else {
         this.cliente = {};
       }
@@ -101,6 +104,74 @@ export class ClienteEditPage implements OnInit {
       console.log("Error al eliminar el cliente");
     });
 
+  }
+
+  uploadFile = (input: HTMLInputElement) => {
+    if (!input.files) return
+    const files: FileList = input.files;
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files.item(i);
+      if (file) {
+        console.log(file, file.name);
+        const storageRef = ref(this.storage, `avatars/cliente/${this.id}`);
+        uploadBytesResumable(storageRef, file).on(
+          'state_changed',
+          this.onUploadChange,
+          this.onUploadError,
+          this.onUploadComplete,
+        );
+      }
+    }
+  }
+
+  onUploadChange = (response: UploadTaskSnapshot) => {
+    console.log('onUploadChange', response);
+  }
+
+  onUploadError = (error: StorageError) => {
+    console.log('onUploadError', error);
+  }
+
+  onUploadComplete = () => {
+    console.log('upload completo');
+    this.editarAvatar();
+    this.obtenerAvatarCliente();
+  }
+
+  editarAvatar = () => {
+    const document = doc(this.firestore, "mantenimiento_seguro", this.id);
+    updateDoc(document, {
+      avatar: 'avatars/cliente/' + this.id
+    }).then(doc => {
+      console.log("Avatar Editado");
+    });
+  }
+
+  obtenerAvatarCliente = () => {
+    const storageRef = ref(this.storage, `avatars/cliente/${this.id}`);
+    getDownloadURL(storageRef).then(doc => {
+      this.avatar = doc;
+    });
+  }
+
+  eliminarAvatar = () => {
+    const storageRef = ref(this.storage, `avatars/cliente/${this.id}`);
+    deleteObject(storageRef).then(() => {
+      console.log('Avatar eliminado del almacenamiento');
+
+      const document = doc(this.firestore, "mantenimiento_seguro", this.id);
+      updateDoc(document, {
+        avatar: ''
+      }).then(() => {
+        console.log('Avatar eliminado del documento');
+        this.avatar = '';
+      }).catch(error => {
+        console.error('Error al actualizar el documento: ', error);
+      });
+    }).catch(error => {
+      console.error('Error al eliminar el avatar del almacenamiento: ', error);
+    });
   }
 
 }
